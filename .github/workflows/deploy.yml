@@ -11,18 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      # Step 2: Set up Node.js with a specific version (e.g., v18.x)
       - name: Setup Node
         uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
 
+      # Step 3: Install dependencies
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+        run: npm ci  # Using npm ci for a clean install
 
+      # Step 4: Build the project
       - name: Build project
         run: npm run build
 
+      # Step 5: Upload production-ready build files
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v3
         with:
@@ -36,12 +43,14 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
+      # Step 6: Download build artifacts from the build job
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: production-files
           path: ./dist
 
+      # Step 7: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
